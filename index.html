@@ -1,0 +1,87 @@
+  <!DOCTYPE html>
+  <html lang="en" dir="ltr">
+    <head>
+      <meta charset="utf-8">
+      <title></title>
+      <script type="text/javascript">
+        Number.prototype.between = function(a, b) {
+          let min = a, max = b;
+          return this >= min && this <= max;
+        };
+        // Список курсов
+        let courses = [
+            { name: "Courses in England", prices: [0, 100] },
+            { name: "Courses in Germany", prices: [500, null] },
+            { name: "Courses in Italy", prices: [100, 200] },
+            { name: "Courses in Russia", prices: [null, 400] },
+            { name: "Courses in China", prices: [50, 250] },
+            { name: "Courses in USA", prices: [200, null] },
+            { name: "Courses in Kazakhstan", prices: [56, 324] },
+            { name: "Courses in France", prices: [null, null] },
+        ];
+        // 1 - en, it, fr, us
+        // 2 - it, us, fr
+        // 3 - ge, ru, us, fr
+
+        // Варианты цен (фильтры), которые ищет пользователь
+        let requiredRange1 = [null, 200];
+        let requiredRange2 = [100, 350];
+        let requiredRange3 = [200, null];
+        searchCourse(courses, requiredRange1);
+        searchCourse(courses, requiredRange2);
+        searchCourse(courses, requiredRange3);
+        // Цикл
+        function searchCourse(courses, range) {
+          let res = [];
+          for (let course of courses) {
+            if (checkCoursePrice(course, range)) {
+              res.push(course)
+            };
+
+          }
+          console.log(res);
+          console.log('-----------');
+        }
+
+        // Проверка курса
+        function checkCoursePrice(course, range) {
+          let min = 0, max = Math.max(), cmin = course.prices[0], cmax = course.prices[1];
+          //
+          // --- Редактируем внутренние переменные из null, к инту, чтобы было проще сравнивать
+          //
+          if (cmin === null && cmax === null) {
+            return true;
+          }
+          if (cmax !== null) {
+            max = cmax;
+          } else if (range[1] !== null) {
+            if (cmin !== null) cmax = cmin;
+          } else {
+            cmax = max
+          }
+          if (range[0] !== null && cmin === null) {
+            cmin = range[0]
+          } else if(cmin === null) {
+            cmin =  min;
+          }
+
+          //
+          // --- Сама проверка
+          //
+          switch (true) {
+            case range[0] === null && cmin.between(min, range[1]) && cmax.between(min, range[1]):
+              return true;
+            case range[1] === null && cmin >= range[0]:
+              return true;
+            case cmin.between(range[0], range[1]) && cmax.between(range[0], range[1]):
+              return true;
+            default: return false;
+          }
+          return false;
+        }
+      </script>
+    </head>
+    <body>
+
+    </body>
+  </html>
